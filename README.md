@@ -51,7 +51,7 @@ To unlock the full power of the "Pro" engines, the following external tools must
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/Nethru2002/polyconvert-pro.git
-   cd polyconvert-pro-ai
+   cd polyconvert-pro
    ```
 
 2. **Install Python Libraries:**
