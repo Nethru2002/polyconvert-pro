@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from .base import BaseConverter
 
 class ImageConverter(BaseConverter):
@@ -6,10 +6,14 @@ class ImageConverter(BaseConverter):
         supported = ['jpg', 'jpeg', 'png', 'webp', 'bmp']
         return source_ext in supported and target_ext in supported
 
-    def convert(self, input_path, output_path):
+    def convert(self, input_path, output_path, optimize=True, watermark_text=None):
         with Image.open(input_path) as img:
-            # Convert to RGB if saving as JPG (to handle transparency)
-            if output_path.endswith('.jpg') or output_path.endswith('.jpeg'):
-                img = img.convert('RGB')
-            img.save(output_path)
+            if img.mode in ("RGBA", "P"):
+                img = img.convert("RGB")
+            
+            if watermark_text:
+                draw = ImageDraw.Draw(img)
+                draw.text((10, 10), watermark_text, fill=(255, 255, 255))
+
+            img.save(output_path, optimize=optimize, quality=85)
         return True

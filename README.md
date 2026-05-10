@@ -1,117 +1,118 @@
 ***
 
-# 🚀 PolyConvert Pro: Universal File Conversion Suite
+# 🚀 PolyConvert Pro AI
+**The Ultimate Universal File Intelligence & Conversion Suite**
 
-**PolyConvert Pro** is a high-performance, modular desktop application designed to identify and convert virtually any file type. Built with a **Plugin-Based Architecture**, it combines professional-grade libraries like FFmpeg, Tesseract OCR, and Pandas into a single, sleek, modern interface.
+PolyConvert Pro AI is a high-performance, plugin-based desktop application designed to identify, preview, and convert virtually any file format. Equipped with local AI for speech-to-text and a professional modern interface, it serves as an all-in-one "Swiss Army Knife" for digital assets.
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
-![Python](https://img.shields.io/badge/python-3.8%2B-brightgreen.svg)
-![License](https://img.shields.io/badge/license-MIT-orange.svg)
+![Version](https://img.shields.io/badge/version-3.5.0-blue.svg)
+![Python](https://img.shields.io/badge/python-3.9%2B-brightgreen.svg)
+![AI](https://img.shields.io/badge/AI-Whisper-orange.svg)
 
 ---
 
 ## ✨ Key Features
 
--   **🎨 Modern UI:** A professional sidebar-based interface built with `CustomTkinter` featuring Dark/Light mode support.
--   **🔍 Smart Identification:** Uses **Magic Bytes** (MIME detection) to identify files regardless of their extension.
--   **📄 Office Suite:** High-fidelity conversion between **Word (.docx)** and **PDF**.
--   **🖼️ Image Studio:** Convert and compress between PNG, JPG, WebP, and BMP.
--   **📊 Data Engine:** Seamlessly move data between **Excel (XLSX)**, **CSV**, and **JSON**.
--   **🎬 Multimedia:** Extract audio from video (MP4 to MP3) or change video formats (MOV to MP4) using FFmpeg.
--   **👁️ OCR Engine:** Convert scanned images or PDFs into editable **Text (.txt)** files.
--   **⚡ Parallel Processing:** Built to handle batch conversions efficiently.
+### 🧠 AI & Intelligence
+- **Local AI Transcription:** Convert Audio/Video into text using OpenAI’s Whisper model (100% offline after first run).
+- **🎤 Live Dictation:** Real-time voice-to-text capture using your microphone with auto-punctuation.
+- **Smart MIME Detection:** Identifies files by their "Magic Bytes," not just their extension.
+- **OCR Engine:** Extract editable text from images and scanned PDFs.
+
+### 🔄 Advanced Conversions
+- **Office Suite:** High-fidelity conversion between **Word (.docx)**, **PDF**, **HTML**, and **TXT**.
+- **3D Modeling:** Convert engineering/design files (OBJ, STL, PLY, GLB).
+- **Multimedia:** Format shifting for Video/Audio and audio extraction (MP4 to MP3).
+- **Data Engine:** Seamlessly move data between **Excel**, **CSV**, and **JSON**.
+- **Archives:** Compress files into **ZIP** or **7Z** or extract existing archives.
+
+### 🎨 User Experience
+- **SaaS-Style GUI:** A modern, dark-themed sidebar interface built with `CustomTkinter`.
+- **Live Preview Panel:** Instantly view images or read the first 1000 characters of code/text before converting.
+- **Threaded Execution:** Conversion runs in the background to prevent UI freezing.
 
 ---
 
-## 📂 Project Structure
+## 🛠️ System Dependencies
 
-```text
-universal_converter/
-├── main.py                # CLI Entry point & Logic controller
-├── gui.py                 # Modern Sidebar Graphical Interface
-├── core/
-│   ├── identifier.py      # MIME-type detection logic
-│   ├── registry.py        # Plugin management & Parallel logic
-│   └── utils.py           # System dependency checks & Path helpers
-├── converters/
-│   ├── base.py            # Abstract Base Class for all plugins
-│   ├── image_conv.py      # Image processing
-│   ├── data_conv.py       # Spreadsheets & JSON
-│   ├── office_conv.py     # Word & PDF (High Fidelity)
-│   ├── video_conv.py      # Video & Audio (FFmpeg)
-│   └── ocr_conv.py        # Image-to-Text (Tesseract)
-└── requirements.txt       # Python dependencies
-```
+To unlock the full power of the "Pro" engines, the following external tools must be installed on your operating system:
+
+| Tool | Purpose | Status |
+| :--- | :--- | :--- |
+| **FFmpeg** | Video/Audio & AI Transcription | Required for Media |
+| **Tesseract OCR** | Image-to-Text conversion | Required for OCR |
+| **Pandoc** | E-book and advanced document logic | Optional |
+| **MS Word** | Best results for Word ➔ PDF | Optional |
 
 ---
 
-## 🛠️ Installation & Setup
+## 📥 Installation
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/Nethru2002/polyconvert-pro.git
-cd polyconvert-pro
-```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Nethru2002/polyconvert-pro.git
+   cd polyconvert-pro-ai
+   ```
 
-### 2. Install Python Dependencies
-```bash
-pip install -r requirements.txt
-```
+2. **Install Python Libraries:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+   *(Major libraries: `customtkinter`, `openai-whisper`, `trimesh`, `pandas`, `python-docx`, `pdf2docx`, `pillow`, `ffmpeg-python`)*
 
-### 3. Install System Requirements (Crucial)
-To enable Video and OCR features, you must install these tools on your OS:
-
-| Tool | Windows | macOS | Linux |
-| :--- | :--- | :--- | :--- |
-| **FFmpeg** | [Download](https://www.gyan.dev/ffmpeg/builds/) & add to PATH | `brew install ffmpeg` | `sudo apt install ffmpeg` |
-| **Tesseract** | [Download](https://github.com/UB-Mannheim/tesseract/wiki) | `brew install tesseract` | `sudo apt install tesseract-ocr` |
-| **libmagic** | `pip install python-magic-bin` | `brew install libmagic` | `sudo apt install libmagic1` |
+3. **Check System PATH:**
+   Ensure `ffmpeg` and `tesseract` are accessible from your terminal.
 
 ---
 
-## 🚀 Usage
+## 🖥️ Usage
 
-### Graphical Interface (Recommended)
-Launch the modern desktop suite:
+### Desktop Application
+Launch the full Graphical User Interface:
 ```bash
 python gui.py
 ```
 
-### Command Line Interface
-For quick single conversions:
+### Command Line
+For quick terminal-based conversion:
 ```bash
-python main.py <input_file> <target_extension>
+python main.py <path_to_file> <target_extension>
 ```
-*Example:* `python main.py resume.pdf docx`
+*Aliases supported: `word`, `excel`, `image`, `audio`.*
 
 ---
 
-## 🛠️ Supported Conversions
+## 📂 Supported Formats (Summary)
 
-| Module | Supported Formats |
+| Category | Formats |
 | :--- | :--- |
-| **Documents** | DOCX ↔ PDF, TXT → PDF |
-| **Images** | PNG, JPG, WEBP, BMP (Any to Any) |
-| **Data** | CSV, XLSX, JSON (Any to Any) |
-| **Video/Audio** | MP4, AVI, MOV, MKV, MP3, WAV |
-| **OCR** | JPG, PNG, PDF → Editable TXT |
+| **Images** | JPG, PNG, WEBP, BMP |
+| **Documents** | DOCX, PDF, TXT, HTML |
+| **Data** | CSV, XLSX, JSON |
+| **3D Models** | OBJ, STL, PLY, GLB, OFF |
+| **Archives** | ZIP, 7Z, TAR, GZ |
+| **Audio/Video** | MP4, AVI, MOV, MP3, WAV, M4A |
 
 ---
 
-## 👩‍💻 For Developers: Adding Plugins
-PolyConvert Pro is designed to be extended. To add a new converter:
-1. Create a new file in `converters/`.
-2. Inherit from `BaseConverter`.
-3. Implement `can_handle()` and `convert()`.
-4. Register your class in `converters/__init__.py`.
+## 👩‍💻 Project Architecture
+The software follows a **Modular Plugin Registry** pattern:
+- **`core/`**: The engine (Identifier, Registry, Recorder).
+- **`converters/`**: Independent plugins for each format family.
+- **`gui.py`**: The interface layer.
+- **`main.py`**: The logical controller.
 
 ---
 
 ## 📜 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## 🙌 Contributing
-Contributions are welcome! If you have a suggestion for a new converter or a UI improvement, please open an issue or a Pull Request.
+## 🤝 Contributing
+1. Fork the Project.
+2. Create your Feature Branch (`git checkout -b feature/NewConverter`).
+3. Commit your Changes.
+4. Push to the Branch.
+5. Open a Pull Request.
 
 ---
-*Built with ❤️ for a seamless file experience.*
+*Developed for the next generation of file management.*
