@@ -1,17 +1,25 @@
 ***
 
-# Universal File Converter
+# 🚀 PolyConvert Pro: Universal File Conversion Suite
 
-This is a modular, plugin-based Python tool designed to identify any file type and convert it into a different format. Unlike basic converters that rely on file extensions, PolyConvert uses **Magic Bytes (MIME detection)** to identify the true nature of a file before processing.
+**PolyConvert Pro** is a high-performance, modular desktop application designed to identify and convert virtually any file type. Built with a **Plugin-Based Architecture**, it combines professional-grade libraries like FFmpeg, Tesseract OCR, and Pandas into a single, sleek, modern interface.
 
-The project is built with a **Plugin Architecture**, allowing developers to add support for new file types (Video, Audio, 3D models, etc.) without modifying the core logic.
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Python](https://img.shields.io/badge/python-3.8%2B-brightgreen.svg)
+![License](https://img.shields.io/badge/license-MIT-orange.svg)
 
-## 🚀 Features
+---
 
--   **Deep Identification:** Uses `libmagic` to identify files even if they have no extension.
--   **Plugin-Based:** Easily extendable. Want to support Video? Just drop a new script into the `converters/` folder.
--   **Automatic Output Management:** Creates an `output/` directory automatically and renames converted files cleanly.
--   **Multi-Category Support:** Handles Images, Data (CSV/Excel/JSON), and Documents (TXT to PDF) out of the box.
+## ✨ Key Features
+
+-   **🎨 Modern UI:** A professional sidebar-based interface built with `CustomTkinter` featuring Dark/Light mode support.
+-   **🔍 Smart Identification:** Uses **Magic Bytes** (MIME detection) to identify files regardless of their extension.
+-   **📄 Office Suite:** High-fidelity conversion between **Word (.docx)** and **PDF**.
+-   **🖼️ Image Studio:** Convert and compress between PNG, JPG, WebP, and BMP.
+-   **📊 Data Engine:** Seamlessly move data between **Excel (XLSX)**, **CSV**, and **JSON**.
+-   **🎬 Multimedia:** Extract audio from video (MP4 to MP3) or change video formats (MOV to MP4) using FFmpeg.
+-   **👁️ OCR Engine:** Convert scanned images or PDFs into editable **Text (.txt)** files.
+-   **⚡ Parallel Processing:** Built to handle batch conversions efficiently.
 
 ---
 
@@ -19,121 +27,91 @@ The project is built with a **Plugin Architecture**, allowing developers to add 
 
 ```text
 universal_converter/
-├── main.py                # Entry point (CLI)
+├── main.py                # CLI Entry point & Logic controller
+├── gui.py                 # Modern Sidebar Graphical Interface
 ├── core/
 │   ├── identifier.py      # MIME-type detection logic
-│   └── registry.py        # Plugin management system
+│   ├── registry.py        # Plugin management & Parallel logic
+│   └── utils.py           # System dependency checks & Path helpers
 ├── converters/
-│   ├── base.py            # Abstract Base Class for plugins
-│   ├── image_conv.py      # Image processing (JPG, PNG, WebP)
-│   ├── data_conv.py       # Spreadsheet processing (CSV, XLSX, JSON)
-│   └── document_conv.py   # Document processing (TXT to PDF)
-├── output/                # All converted files are saved here
+│   ├── base.py            # Abstract Base Class for all plugins
+│   ├── image_conv.py      # Image processing
+│   ├── data_conv.py       # Spreadsheets & JSON
+│   ├── office_conv.py     # Word & PDF (High Fidelity)
+│   ├── video_conv.py      # Video & Audio (FFmpeg)
+│   └── ocr_conv.py        # Image-to-Text (Tesseract)
 └── requirements.txt       # Python dependencies
 ```
 
 ---
 
-## 🛠️ Prerequisites
+## 🛠️ Installation & Setup
 
-### 1. System Dependencies
-The identification engine requires `libmagic`.
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Nethru2002/polyconvert-pro.git
+cd polyconvert-pro
+```
 
--   **Windows:** Automatically handled by `python-magic-bin` (see Installation).
--   **macOS:** `brew install libmagic`
--   **Linux:** `sudo apt-get install libmagic1`
+### 2. Install Python Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-### 2. Python
--   Python 3.8 or higher.
+### 3. Install System Requirements (Crucial)
+To enable Video and OCR features, you must install these tools on your OS:
+
+| Tool | Windows | macOS | Linux |
+| :--- | :--- | :--- | :--- |
+| **FFmpeg** | [Download](https://www.gyan.dev/ffmpeg/builds/) & add to PATH | `brew install ffmpeg` | `sudo apt install ffmpeg` |
+| **Tesseract** | [Download](https://github.com/UB-Mannheim/tesseract/wiki) | `brew install tesseract` | `sudo apt install tesseract-ocr` |
+| **libmagic** | `pip install python-magic-bin` | `brew install libmagic` | `sudo apt install libmagic1` |
 
 ---
 
-## 📥 Installation
+## 🚀 Usage
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/Nethru2002/polyconvert.git
-    cd universal_converter
-    ```
+### Graphical Interface (Recommended)
+Launch the modern desktop suite:
+```bash
+python gui.py
+```
 
-2.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-    *If you don't have a requirements file yet, run:*
-    `pip install python-magic python-magic-bin pillow pandas openpyxl fpdf`
+### Command Line Interface
+For quick single conversions:
+```bash
+python main.py <input_file> <target_extension>
+```
+*Example:* `python main.py resume.pdf docx`
 
 ---
 
-## 🖥️ Usage
+## 🛠️ Supported Conversions
 
-Run the tool via the command line by providing the **source file** and the **target extension**.
-
-**General Syntax:**
-```bash
-python main.py <file_path> <target_extension>
-```
-
-### Examples:
-
-**Convert Image (PNG to JPG):**
-```bash
-python main.py travel_photo.png jpg
-```
-
-**Convert Data (CSV to Excel):**
-```bash
-python main.py database.csv xlsx
-```
-
-**Convert Text to PDF:**
-```bash
-python main.py report.txt pdf
-```
-
----
-
-## 🛠️ Supported Conversions (Current)
-
-| Category | Formats |
+| Module | Supported Formats |
 | :--- | :--- |
-| **Images** | PNG, JPG, JPEG, WEBP, BMP |
-| **Data** | CSV, XLSX (Excel), JSON |
-| **Documents** | TXT to PDF |
+| **Documents** | DOCX ↔ PDF, TXT → PDF |
+| **Images** | PNG, JPG, WEBP, BMP (Any to Any) |
+| **Data** | CSV, XLSX, JSON (Any to Any) |
+| **Video/Audio** | MP4, AVI, MOV, MKV, MP3, WAV |
+| **OCR** | JPG, PNG, PDF → Editable TXT |
 
 ---
 
-## 👩‍💻 For Developers: Adding New Converters
-
-Adding support for a new category (e.g., Audio) is simple:
-
-1.  Create a new file in `converters/your_type_conv.py`.
-2.  Inherit from `BaseConverter`.
-3.  Implement `can_handle` and `convert`.
-4.  Register it in `converters/__init__.py`.
-
-```python
-# Example for a hypothetical Audio Converter
-class AudioConverter(BaseConverter):
-    def can_handle(self, source, target):
-        return source in ['wav', 'mp3'] and target in ['wav', 'mp3']
-
-    def convert(self, input_path, output_path):
-        # Your conversion logic here
-        pass
-```
+## 👩‍💻 For Developers: Adding Plugins
+PolyConvert Pro is designed to be extended. To add a new converter:
+1. Create a new file in `converters/`.
+2. Inherit from `BaseConverter`.
+3. Implement `can_handle()` and `convert()`.
+4. Register your class in `converters/__init__.py`.
 
 ---
 
-## 📄 License
-Distributed under the MIT License. See `LICENSE` for more information.
+## 📜 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Contributing
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/NewConverter`)
-3. Commit your Changes (`git commit -m 'Add support for GIF to MP4'`)
-4. Push to the Branch (`git push origin feature/NewConverter`)
-5. Open a Pull Request
+## 🙌 Contributing
+Contributions are welcome! If you have a suggestion for a new converter or a UI improvement, please open an issue or a Pull Request.
 
 ---
-*Developed with ❤️ for the open-source community.*
+*Built with ❤️ for a seamless file experience.*
