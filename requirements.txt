@@ -1,5 +1,9 @@
-python-magic        # File identification
-pillow              # Image conversion
-pandas              # Data conversion (CSV/Excel)
-openpyxl            # Excel support for pandas
-fpdf                # Creating PDFs from text
+python-magic
+python-magic-bin
+pillow
+pandas
+openpyxl
+fpdf
+ffmpeg-python
+pytesseract
+tqdm
