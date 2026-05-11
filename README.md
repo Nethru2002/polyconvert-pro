@@ -3,116 +3,135 @@
 # 🚀 PolyConvert Pro AI
 **The Ultimate Universal File Intelligence & Conversion Suite**
 
-PolyConvert Pro AI is a high-performance, plugin-based desktop application designed to identify, preview, and convert virtually any file format. Equipped with local AI for speech-to-text and a professional modern interface, it serves as an all-in-one "Swiss Army Knife" for digital assets.
+PolyConvert Pro AI is a modular, high-performance desktop application designed to identify, preview, and convert over 50+ file formats. Built with a **Plugin-Based Architecture**, it integrates local AI for speech-to-text, OCR for image-to-data, 3D modeling support, and professional-grade multimedia engines.
 
 ![Version](https://img.shields.io/badge/version-3.5.0-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.9%2B-brightgreen.svg)
 ![AI](https://img.shields.io/badge/AI-Whisper-orange.svg)
+![Developers](https://img.shields.io/badge/Developed%20By-Nethru%20%26%20Hiruni-blueviolet)
+
+---
+
+## 👥 Developed By
+This project was designed and developed by:
+*   **Nethru Randev Wickramasekara**
+*   **Hiruni Hapuarachchi**
 
 ---
 
 ## ✨ Key Features
 
-### 🧠 AI & Intelligence
-- **Local AI Transcription:** Convert Audio/Video into text using OpenAI’s Whisper model (100% offline after first run).
-- **🎤 Live Dictation:** Real-time voice-to-text capture using your microphone with auto-punctuation.
-- **Smart MIME Detection:** Identifies files by their "Magic Bytes," not just their extension.
-- **OCR Engine:** Extract editable text from images and scanned PDFs.
+### 🧠 Intelligence & AI
+-   **🎤 Live Dictation:** Real-time voice-to-text capture using OpenAI’s Whisper AI with auto-punctuation.
+-   **🧠 AI Transcription:** Local processing of audio/video files into clean text transcripts.
+-   **🔍 Deep Identification:** Uses "Magic Bytes" (MIME) to detect file types even if the extension is missing or wrong.
+-   **👁️ OCR Engine:** Extracts editable text from images (JPG, PNG) and scanned PDF documents.
 
-### 🔄 Advanced Conversions
-- **Office Suite:** High-fidelity conversion between **Word (.docx)**, **PDF**, **HTML**, and **TXT**.
-- **3D Modeling:** Convert engineering/design files (OBJ, STL, PLY, GLB).
-- **Multimedia:** Format shifting for Video/Audio and audio extraction (MP4 to MP3).
-- **Data Engine:** Seamlessly move data between **Excel**, **CSV**, and **JSON**.
-- **Archives:** Compress files into **ZIP** or **7Z** or extract existing archives.
+### 🔄 Multi-Format Conversions
+-   **📁 Office Suite:** High-fidelity conversion between **Word (.docx)**, **PDF**, **HTML**, and **TXT**.
+-   **🖼️ Image Studio:** Professional format shifting and web optimization for PNG, JPG, WEBP, and BMP.
+-   **📐 3D Engineering:** Convert between STL, OBJ, PLY, and GLB formats for 3D printing and design.
+-   **📦 Archive Suite:** Create or extract ZIP and 7Z archives with high compression ratios.
+-   **📚 E-Book Studio:** Transition between EPUB, MOBI, and PDF formats for digital reading.
+-   **📊 Data Engine:** Seamlessly move data between **Excel (XLSX)**, **CSV**, and **JSON**.
 
 ### 🎨 User Experience
-- **SaaS-Style GUI:** A modern, dark-themed sidebar interface built with `CustomTkinter`.
-- **Live Preview Panel:** Instantly view images or read the first 1000 characters of code/text before converting.
-- **Threaded Execution:** Conversion runs in the background to prevent UI freezing.
+-   **SaaS-Style GUI:** A modern, dark-themed sidebar interface built with `CustomTkinter`.
+-   **Live Preview Panel:** Instantly view images or read code/text/CSV data before you hit convert.
+-   **Threaded Execution:** Background processing ensures the UI never freezes during heavy AI tasks.
 
 ---
 
-## 🛠️ System Dependencies
+## 📂 Project Structure
 
-To unlock the full power of the "Pro" engines, the following external tools must be installed on your operating system:
-
-| Tool | Purpose | Status |
-| :--- | :--- | :--- |
-| **FFmpeg** | Video/Audio & AI Transcription | Required for Media |
-| **Tesseract OCR** | Image-to-Text conversion | Required for OCR |
-| **Pandoc** | E-book and advanced document logic | Optional |
-| **MS Word** | Best results for Word ➔ PDF | Optional |
+```text
+UNIVERSAL_CONVERTER/
+├── converters/           # Plugin Architecture family
+│   ├── __init__.py       # Auto-registers all conversion plugins
+│   ├── archive_conv.py   # ZIP, 7Z, TAR, GZ logic
+│   ├── base.py           # Abstract Base Class for plugins
+│   ├── data_conv.py      # CSV, XLSX, JSON logic
+│   ├── document_conv.py  # TXT to PDF logic
+│   ├── ebook_conv.py     # EPUB, MOBI, PDF logic
+│   ├── image_conv.py     # PNG, JPG, WEBP, BMP logic
+│   ├── ocr_conv.py       # Image-to-Text (Tesseract) engine
+│   ├── office_conv.py    # Word, PDF, HTML, TXT engine
+│   ├── three_d_conv.py   # OBJ, STL, PLY, GLB engine
+│   ├── transcribe_conv.py# AI Speech-to-Text (Whisper) engine
+│   └── video_conv.py     # MP4, AVI, MOV, MP3 engine
+├── core/                 # System Internals
+│   ├── __init__.py       # Package initialization
+│   ├── identifier.py     # File Type Identification (MIME)
+│   ├── recorder.py       # Microphone & Audio Capture logic
+│   ├── registry.py       # Plugin Manager & Lookups
+│   └── utils.py          # Path helpers & folder management
+├── output/               # Default folder for converted files
+├── debug_app.py          # System Diagnostic & Health Check tool
+├── Dockerfile            # Config for containerized deployment
+├── fix_windows_path.py   # Utility to fix Windows PATH permanently
+├── gui.py                # Main Modern Sidebar Graphical Interface
+├── install_ffmpeg.py     # Automated FFmpeg system installer
+├── main.py               # Logic Controller & Extension Alias Mapper
+├── README.md             # Project Documentation
+└── requirements.txt      # Python library dependencies
+```
 
 ---
 
-## 📥 Installation
+## 🛠️ Setup & Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Nethru2002/polyconvert-pro.git
-   cd polyconvert-pro
-   ```
+### 1. Python Environment
+Install all required Python libraries via pip:
+```bash
+pip install -r requirements.txt
+```
 
-2. **Install Python Libraries:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-   *(Major libraries: `customtkinter`, `openai-whisper`, `trimesh`, `pandas`, `python-docx`, `pdf2docx`, `pillow`, `ffmpeg-python`)*
+### 2. Automated FFmpeg Setup (Crucial for AI/Video)
+To avoid `WinError 2`, use the built-in automated installer. It will download and configure FFmpeg for you:
+```bash
+python install_ffmpeg.py
+```
+After the script finishes, run the path fixer and **restart VS Code**:
+```bash
+python fix_windows_path.py
+```
 
-3. **Check System PATH:**
-   Ensure `ffmpeg` and `tesseract` are accessible from your terminal.
+### 3. Tesseract OCR Setup
+To enable Image-to-Text (OCR):
+1. Download [Tesseract for Windows](https://github.com/UB-Mannheim/tesseract/wiki).
+2. Install it to `C:\Program Files\Tesseract-OCR`.
+
+### 4. Verify System Health
+Run the diagnostic tool to ensure all 10+ plugins and system tools are ready:
+```bash
+python debug_app.py
+```
 
 ---
 
-## 🖥️ Usage
+## 🚀 How to Use
 
-### Desktop Application
-Launch the full Graphical User Interface:
+### Desktop Graphical Interface
+Launch the modern suite:
 ```bash
 python gui.py
 ```
 
-### Command Line
-For quick terminal-based conversion:
+### Command Line Interface
 ```bash
-python main.py <path_to_file> <target_extension>
+python main.py <input_file> <target_extension>
 ```
-*Aliases supported: `word`, `excel`, `image`, `audio`.*
+*Note: You can use friendly names in the extension field like `word`, `excel`, `image`, or `audio`.*
 
 ---
 
-## 📂 Supported Formats (Summary)
-
-| Category | Formats |
-| :--- | :--- |
-| **Images** | JPG, PNG, WEBP, BMP |
-| **Documents** | DOCX, PDF, TXT, HTML |
-| **Data** | CSV, XLSX, JSON |
-| **3D Models** | OBJ, STL, PLY, GLB, OFF |
-| **Archives** | ZIP, 7Z, TAR, GZ |
-| **Audio/Video** | MP4, AVI, MOV, MP3, WAV, M4A |
-
----
-
-## 👩‍💻 Project Architecture
-The software follows a **Modular Plugin Registry** pattern:
-- **`core/`**: The engine (Identifier, Registry, Recorder).
-- **`converters/`**: Independent plugins for each format family.
-- **`gui.py`**: The interface layer.
-- **`main.py`**: The logical controller.
+## 🔒 Privacy & Performance
+- **100% Local:** No files are uploaded to the cloud. All AI transcription and OCR happen on your local hardware.
+- **Auto-Model Download:** On the first use of AI Transcription, the app will download the Whisper model (approx. 142MB). This is a one-time process.
 
 ---
 
 ## 📜 License
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. 
 
-## 🤝 Contributing
-1. Fork the Project.
-2. Create your Feature Branch (`git checkout -b feature/NewConverter`).
-3. Commit your Changes.
-4. Push to the Branch.
-5. Open a Pull Request.
-
----
-*Developed for the next generation of file management.*
+Developed with ❤️ by **Nethru Randev Wickramasekara** and **Hiruni Hapuarachchi**.

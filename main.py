@@ -1,5 +1,7 @@
 import os
 import sys
+os.environ["PATH"] += os.pathsep + r'C:\ffmpeg\bin'
+
 from core.identifier import identify_file
 from core.registry import registry
 from core.utils import ensure_dir

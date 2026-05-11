@@ -1,10 +1,13 @@
+import os
+import os.path
+os.environ["PATH"] += os.pathsep + r'C:\ffmpeg\bin'
+
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from main import UniversalConverter
 from core.recorder import record_live_audio
 from converters.transcribe_conv import TranscribeConverter
 from PIL import Image as PILImage
-import os
 import threading
 
 ctk.set_appearance_mode("Dark")
@@ -79,19 +82,16 @@ class PolyConvertPro(ctk.CTk):
         self.status_label = ctk.CTkLabel(self.main_frame, text="System Idle", text_color="gray50")
         self.status_label.pack()
 
-        # --- UPDATED PREVIEW SECTION ---
-        self.preview_frame = ctk.CTkFrame(self, width=350) # Fixed width for the preview
+        self.preview_frame = ctk.CTkFrame(self, width=350)
         self.preview_frame.grid(row=0, column=2, padx=(0, 20), pady=20, sticky="nsew")
-        self.preview_frame.grid_propagate(False) # Prevents frame from growing
+        self.preview_frame.grid_propagate(False)
         
         ctk.CTkLabel(self.preview_frame, text="FILE PREVIEW", font=ctk.CTkFont(size=12, weight="bold")).pack(pady=15)
         
-        # We use a Textbox here so long text wraps and stays inside
         self.preview_text = ctk.CTkTextbox(self.preview_frame, fg_color="transparent", wrap="word", font=("Courier New", 12))
         self.preview_text.pack(expand=True, fill="both", padx=15, pady=(0, 15))
         
         self.preview_image_display = ctk.CTkLabel(self.preview_frame, text="")
-        # Initially hidden, will show when image is loaded
 
         self.selected_path = None
 
@@ -104,24 +104,24 @@ class PolyConvertPro(ctk.CTk):
 
     def update_preview(self, path):
         ext = path.split('.')[-1].lower()
-        self.preview_text.delete("1.0", "end") # Clear text
-        self.preview_image_display.configure(image=None, text="") # Clear image
+        self.preview_text.delete("1.0", "end")
+        self.preview_image_display.configure(image=None, text="")
 
         try:
             if ext in ['png', 'jpg', 'jpeg', 'webp', 'bmp']:
-                self.preview_text.pack_forget() # Hide textbox
-                self.preview_image_display.pack(expand=True, fill="both") # Show label
+                self.preview_text.pack_forget()
+                self.preview_image_display.pack(expand=True, fill="both")
                 
                 img = PILImage.open(path)
                 img.thumbnail((300, 300))
                 ctk_img = ctk.CTkImage(light_image=img, size=(280, 280))
                 self.preview_image_display.configure(image=ctk_img, text="")
             elif ext in ['txt', 'py', 'csv', 'json', 'js', 'html', 'md']:
-                self.preview_image_display.pack_forget() # Hide image label
-                self.preview_text.pack(expand=True, fill="both", padx=15, pady=(0, 15)) # Show textbox
+                self.preview_image_display.pack_forget()
+                self.preview_text.pack(expand=True, fill="both", padx=15, pady=(0, 15))
                 
                 with open(path, 'r', errors='ignore') as f:
-                    content = f.read(2000) # Read first 2k characters
+                    content = f.read(2000)
                 self.preview_text.insert("0.0", content)
             else:
                 self.preview_text.pack(expand=True, fill="both")
@@ -137,7 +137,8 @@ class PolyConvertPro(ctk.CTk):
                 self.status_label.configure(text="🧠 AI Transcribing...", text_color="#3498db")
                 output_txt = f"output/dictation_{os.path.basename(temp_audio)}.txt"
                 TranscribeConverter().convert(temp_audio, output_txt)
-                os.remove(temp_audio)
+                if os.path.exists(temp_audio):
+                    os.remove(temp_audio)
                 self.status_label.configure(text="✅ Transcription Complete", text_color="#2ecc71")
                 self.update_preview(output_txt)
                 messagebox.showinfo("Success", "Dictation saved to output folder.")
