@@ -16,7 +16,7 @@ class PolyConvertPro(ctk.CTk):
 
         self.app_logic = UniversalConverter()
         self.title("PolyConvert Pro AI")
-        self.geometry("1150x700")
+        self.geometry("1200x700")
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=0)
@@ -79,13 +79,19 @@ class PolyConvertPro(ctk.CTk):
         self.status_label = ctk.CTkLabel(self.main_frame, text="System Idle", text_color="gray50")
         self.status_label.pack()
 
-        self.preview_frame = ctk.CTkFrame(self, width=320)
+        # --- UPDATED PREVIEW SECTION ---
+        self.preview_frame = ctk.CTkFrame(self, width=350) # Fixed width for the preview
         self.preview_frame.grid(row=0, column=2, padx=(0, 20), pady=20, sticky="nsew")
+        self.preview_frame.grid_propagate(False) # Prevents frame from growing
         
         ctk.CTkLabel(self.preview_frame, text="FILE PREVIEW", font=ctk.CTkFont(size=12, weight="bold")).pack(pady=15)
         
-        self.preview_display = ctk.CTkLabel(self.preview_frame, text="No Preview Available", text_color="gray40")
-        self.preview_display.pack(expand=True, fill="both", padx=15, pady=10)
+        # We use a Textbox here so long text wraps and stays inside
+        self.preview_text = ctk.CTkTextbox(self.preview_frame, fg_color="transparent", wrap="word", font=("Courier New", 12))
+        self.preview_text.pack(expand=True, fill="both", padx=15, pady=(0, 15))
+        
+        self.preview_image_display = ctk.CTkLabel(self.preview_frame, text="")
+        # Initially hidden, will show when image is loaded
 
         self.selected_path = None
 
@@ -98,20 +104,30 @@ class PolyConvertPro(ctk.CTk):
 
     def update_preview(self, path):
         ext = path.split('.')[-1].lower()
+        self.preview_text.delete("1.0", "end") # Clear text
+        self.preview_image_display.configure(image=None, text="") # Clear image
+
         try:
             if ext in ['png', 'jpg', 'jpeg', 'webp', 'bmp']:
+                self.preview_text.pack_forget() # Hide textbox
+                self.preview_image_display.pack(expand=True, fill="both") # Show label
+                
                 img = PILImage.open(path)
-                img.thumbnail((280, 280))
-                ctk_img = ctk.CTkImage(light_image=img, size=(250, 250))
-                self.preview_display.configure(image=ctk_img, text="")
-            elif ext in ['txt', 'py', 'csv', 'json', 'js', 'html']:
+                img.thumbnail((300, 300))
+                ctk_img = ctk.CTkImage(light_image=img, size=(280, 280))
+                self.preview_image_display.configure(image=ctk_img, text="")
+            elif ext in ['txt', 'py', 'csv', 'json', 'js', 'html', 'md']:
+                self.preview_image_display.pack_forget() # Hide image label
+                self.preview_text.pack(expand=True, fill="both", padx=15, pady=(0, 15)) # Show textbox
+                
                 with open(path, 'r', errors='ignore') as f:
-                    content = f.read(1000)
-                self.preview_display.configure(text=content, image=None, font=("Courier New", 11), justify="left", anchor="nw")
+                    content = f.read(2000) # Read first 2k characters
+                self.preview_text.insert("0.0", content)
             else:
-                self.preview_display.configure(text=f"Preview not available for\n.{ext} files", image=None)
-        except:
-            self.preview_display.configure(text="Error generating preview")
+                self.preview_text.pack(expand=True, fill="both")
+                self.preview_text.insert("0.0", f"Preview not available for .{ext} files.")
+        except Exception as e:
+            self.preview_text.insert("0.0", "Error generating preview.")
 
     def start_live_listening(self):
         def task():
