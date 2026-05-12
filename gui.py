@@ -1,189 +1,166 @@
-import os
-import os.path
-os.environ["PATH"] += os.pathsep + r'C:\ffmpeg\bin'
-
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
+import os
+import threading
+from PIL import Image as PILImage
 from main import UniversalConverter
 from core.recorder import record_live_audio
 from converters.transcribe_conv import TranscribeConverter
-from PIL import Image as PILImage
-import threading
 
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
-class PolyConvertPro(ctk.CTk):
+class PolyConvertStudio(ctk.CTk):
     def __init__(self):
         super().__init__()
 
         self.app_logic = UniversalConverter()
-        self.title("PolyConvert Pro AI")
-        self.geometry("1200x700")
+        self.title("PolyConvert Studio Pro")
+        self.geometry("1150x700")
 
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_columnconfigure(2, weight=0)
-        self.grid_rowconfigure(0, weight=1)
-
-        self.sidebar = ctk.CTkFrame(self, width=220, corner_radius=0)
-        self.sidebar.grid(row=0, column=0, sticky="nsew")
+        self.sidebar = ctk.CTkFrame(self, width=240, corner_radius=0)
+        self.sidebar.pack(side="left", fill="y")
         
-        ctk.CTkLabel(self.sidebar, text="POLYCONVERT AI", font=ctk.CTkFont(size=20, weight="bold")).pack(pady=20)
+        ctk.CTkLabel(self.sidebar, text="POLYCONVERT", font=("Arial", 22, "bold")).pack(pady=30)
 
-        self.btn_conv = ctk.CTkButton(self.sidebar, text="📁 File Converter", fg_color="transparent", anchor="w")
-        self.btn_conv.pack(pady=5, padx=10, fill="x")
+        self.nav_mic = ctk.CTkButton(self.sidebar, text="🎤 Live Dictation", fg_color="#e67e22", hover_color="#d35400", anchor="w", height=40, command=self.start_live_listening)
+        self.nav_mic.pack(pady=5, padx=20, fill="x")
 
-        self.btn_listen = ctk.CTkButton(self.sidebar, text="🎤 Live Dictation", fg_color="#e67e22", hover_color="#d35400", anchor="w", command=self.start_live_listening)
-        self.btn_listen.pack(pady=5, padx=10, fill="x")
-
-        ctk.CTkLabel(self.sidebar, text="ADVANCED OPTIONS", font=ctk.CTkFont(size=12, weight="bold"), text_color="gray").pack(pady=(30, 10))
+        ctk.CTkLabel(self.sidebar, text="APPEARANCE", font=("Arial", 12, "bold"), text_color="gray50").pack(pady=(40, 10))
+        self.mode_switch = ctk.CTkOptionMenu(self.sidebar, values=["Dark", "Light"], command=ctk.set_appearance_mode)
+        self.mode_switch.pack(pady=10, padx=20)
         
-        self.check_optimize = ctk.CTkCheckBox(self.sidebar, text="Optimize for Web")
-        self.check_optimize.pack(pady=5, padx=20, anchor="w")
+        ctk.CTkLabel(self.sidebar, text="Developed by Nethru & Hiruni", font=("Arial", 10), text_color="gray40").pack(side="bottom", pady=20)
 
-        self.check_watermark = ctk.CTkCheckBox(self.sidebar, text="Add Watermark")
-        self.check_watermark.pack(pady=5, padx=20, anchor="w")
+        self.container = ctk.CTkFrame(self, fg_color="transparent")
+        self.container.pack(side="left", fill="both", expand=True, padx=30, pady=30)
 
-        self.check_cloud = ctk.CTkCheckBox(self.sidebar, text="Cloud Upload")
-        self.check_cloud.pack(pady=5, padx=20, anchor="w")
+        self.step1_label = ctk.CTkLabel(self.container, text="1. Pick your file", font=("Arial", 18, "bold"))
+        self.step1_label.pack(anchor="w", pady=(0, 10))
 
-        self.appearance_menu = ctk.CTkOptionMenu(self.sidebar, values=["Dark", "Light"], command=ctk.set_appearance_mode)
-        self.appearance_menu.pack(side="bottom", pady=20, padx=20)
+        self.drop_zone = ctk.CTkFrame(self.container, height=180, border_width=2, border_color="#3498db")
+        self.drop_zone.pack(fill="x", pady=(0, 30))
+        self.drop_zone.pack_propagate(False)
 
-        self.main_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.main_frame.grid(row=0, column=1, padx=30, pady=30, sticky="nsew")
+        self.select_btn = ctk.CTkButton(self.drop_zone, text="Choose File", command=self.select_file, width=140, height=40)
+        self.select_btn.place(relx=0.5, rely=0.4, anchor="center")
 
-        self.title_label = ctk.CTkLabel(self.main_frame, text="Ready to transform your files?", font=ctk.CTkFont(size=26, weight="bold"))
-        self.title_label.pack(pady=(0, 20), anchor="w")
+        self.file_display = ctk.CTkLabel(self.drop_zone, text="Click to browse your computer", text_color="gray60")
+        self.file_display.place(relx=0.5, rely=0.65, anchor="center")
 
-        self.drop_frame = ctk.CTkFrame(self.main_frame, height=200, border_width=2, border_color="gray30")
-        self.drop_frame.pack(fill="x", pady=10)
-        self.drop_frame.pack_propagate(False)
+        self.step2_label = ctk.CTkLabel(self.container, text="2. Choose target format", font=("Arial", 18, "bold"))
+        self.step2_label.pack(anchor="w")
 
-        self.file_btn = ctk.CTkButton(self.drop_frame, text="Select Source File", command=self.select_file, width=160, height=40)
-        self.file_btn.place(relx=0.5, rely=0.4, anchor="center")
-
-        self.file_info_label = ctk.CTkLabel(self.drop_frame, text="or drag and drop here", text_color="gray50")
-        self.file_info_label.place(relx=0.5, rely=0.65, anchor="center")
-
-        self.action_container = ctk.CTkFrame(self.main_frame, fg_color="transparent")
-        self.action_container.pack(pady=40, fill="x")
-
-        self.ext_entry = ctk.CTkEntry(self.action_container, placeholder_text="Target Format (e.g. pdf, mp3, docx)", width=450, height=50, justify="center", font=ctk.CTkFont(size=14))
-        self.ext_entry.pack(pady=(0, 20))
-
-        self.convert_btn = ctk.CTkButton(self.action_container, text="CONVERT NOW", command=self.start_conversion_thread, width=450, height=55, fg_color="#1a73e8", hover_color="#1557b0", font=ctk.CTkFont(size=16, weight="bold"))
-        self.convert_btn.pack()
-
-        self.progress_bar = ctk.CTkProgressBar(self.main_frame, width=450)
-        self.progress_bar.set(0)
-        self.progress_bar.pack(pady=(10, 10))
-
-        self.status_label = ctk.CTkLabel(self.main_frame, text="System Idle", text_color="gray50")
-        self.status_label.pack()
-
-        self.preview_frame = ctk.CTkFrame(self, width=350)
-        self.preview_frame.grid(row=0, column=2, padx=(0, 20), pady=20, sticky="nsew")
-        self.preview_frame.grid_propagate(False)
+        self.suggestion_frame = ctk.CTkFrame(self.container, fg_color="transparent")
+        self.suggestion_frame.pack(fill="x", pady=10)
         
-        ctk.CTkLabel(self.preview_frame, text="FILE PREVIEW", font=ctk.CTkFont(size=12, weight="bold")).pack(pady=15)
-        
-        self.preview_text = ctk.CTkTextbox(self.preview_frame, fg_color="transparent", wrap="word", font=("Courier New", 12))
-        self.preview_text.pack(expand=True, fill="both", padx=15, pady=(0, 15))
-        
-        self.preview_image_display = ctk.CTkLabel(self.preview_frame, text="")
+        self.suggestion_info = ctk.CTkLabel(self.suggestion_frame, text="Select a file to see smart suggestions.", text_color="gray50")
+        self.suggestion_info.pack(pady=20)
 
+        self.manual_entry = ctk.CTkEntry(self.container, placeholder_text="Or type format manually...", width=450, height=45, justify="center")
+        
+        self.convert_btn = ctk.CTkButton(self.container, text="CONVERT NOW", state="disabled", command=self.start_thread, height=55, font=("Arial", 16, "bold"), fg_color="#1a73e8")
+        self.convert_btn.pack(side="bottom", fill="x", pady=20)
+
+        self.status_bar = ctk.CTkLabel(self.container, text="System Ready", text_color="gray50")
+        self.status_bar.pack(side="bottom")
+
+        self.preview_panel = ctk.CTkFrame(self, width=320)
+        self.preview_panel.pack(side="right", fill="y", padx=20, pady=20)
+        self.preview_panel.pack_propagate(False)
+        
+        ctk.CTkLabel(self.preview_panel, text="FILE PREVIEW", font=("Arial", 12, "bold")).pack(pady=20)
+        self.preview_box = ctk.CTkTextbox(self.preview_panel, fg_color="transparent", wrap="word", font=("Courier New", 12))
+        self.preview_box.pack(expand=True, fill="both", padx=10, pady=10)
+
+        self.target_format = None
         self.selected_path = None
 
     def select_file(self):
-        file_path = filedialog.askopenfilename()
-        if file_path:
-            self.selected_path = file_path
-            self.file_info_label.configure(text=f"Selected: {os.path.basename(file_path)}", text_color="#1a73e8")
-            self.update_preview(file_path)
+        path = filedialog.askopenfilename()
+        if path:
+            self.selected_path = path
+            ext = path.split('.')[-1].lower()
+            self.file_display.configure(text=f"📄 {os.path.basename(path)}", text_color="#3498db")
+            self.show_suggestions(ext)
+            self.update_preview(path)
+
+    def show_suggestions(self, ext):
+        for widget in self.suggestion_frame.winfo_children():
+            widget.destroy()
+
+        options = []
+        if ext in ['png', 'jpg', 'jpeg', 'webp']:
+            options = [("To JPG", "jpg"), ("To PNG", "png"), ("To WebP", "webp")]
+        elif ext == 'pdf':
+            options = [("To Word", "docx"), ("To Text", "txt")]
+        elif ext == 'docx':
+            options = [("To PDF", "pdf"), ("To HTML", "html")]
+        elif ext == 'txt':
+            options = [("To Word", "docx"), ("To PDF", "pdf")]
+        elif ext in ['csv', 'xlsx']:
+            options = [("To Excel", "xlsx"), ("To CSV", "csv"), ("To JSON", "json")]
+        elif ext in ['mp4', 'mov', 'wav', 'mp3']:
+            options = [("Extract MP3", "mp3"), ("To MP4", "mp4"), ("To Text", "txt")]
+
+        if options:
+            btn_container = ctk.CTkFrame(self.suggestion_frame, fg_color="transparent")
+            btn_container.pack(fill="x")
+            for label, fmt in options:
+                btn = ctk.CTkButton(btn_container, text=label, width=120, height=35, fg_color="gray30", 
+                                    command=lambda f=fmt: self.set_format(f))
+                btn.pack(side="left", padx=5)
+            self.manual_entry.pack(pady=10, anchor="w")
+        else:
+            self.manual_entry.pack(pady=20, fill="x")
+
+    def set_format(self, fmt):
+        self.target_format = fmt
+        self.convert_btn.configure(state="normal", text=f"CONVERT TO {fmt.upper()}")
+        self.status_bar.configure(text=f"Format set to: {fmt}")
 
     def update_preview(self, path):
-        ext = path.split('.')[-1].lower()
-        self.preview_text.delete("1.0", "end")
-        self.preview_image_display.configure(image=None, text="")
-
+        self.preview_box.delete("1.0", "end")
         try:
-            if ext in ['png', 'jpg', 'jpeg', 'webp', 'bmp']:
-                self.preview_text.pack_forget()
-                self.preview_image_display.pack(expand=True, fill="both")
-                
-                img = PILImage.open(path)
-                img.thumbnail((300, 300))
-                ctk_img = ctk.CTkImage(light_image=img, size=(280, 280))
-                self.preview_image_display.configure(image=ctk_img, text="")
-            elif ext in ['txt', 'py', 'csv', 'json', 'js', 'html', 'md']:
-                self.preview_image_display.pack_forget()
-                self.preview_text.pack(expand=True, fill="both", padx=15, pady=(0, 15))
-                
-                with open(path, 'r', errors='ignore') as f:
-                    content = f.read(2000)
-                self.preview_text.insert("0.0", content)
-            else:
-                self.preview_text.pack(expand=True, fill="both")
-                self.preview_text.insert("0.0", f"Preview not available for .{ext} files.")
+            with open(path, 'r', errors='ignore') as f:
+                self.preview_box.insert("0.0", f.read(2000))
+        except:
+            self.preview_box.insert("0.0", "Preview not available.")
+
+    def start_thread(self):
+        fmt = self.target_format if self.target_format else self.manual_entry.get().strip()
+        if not fmt: return
+        self.convert_btn.configure(state="disabled", text="PROCESSING...")
+        self.status_bar.configure(text="⚙️ Converting... please wait.")
+        threading.Thread(target=self.run_conv, args=(fmt,)).start()
+
+    def run_conv(self, fmt):
+        try:
+            self.app_logic.run(self.selected_path, fmt)
+            self.after(0, lambda: messagebox.showinfo("Success", "Finished! Check the 'output' folder."))
+            self.after(0, lambda: self.status_bar.configure(text="✅ Conversion Successful", text_color="#2ecc71"))
         except Exception as e:
-            self.preview_text.insert("0.0", "Error generating preview.")
+            self.after(0, lambda: messagebox.showerror("Error", str(e)))
+        self.after(0, lambda: self.convert_btn.configure(state="normal", text="CONVERT NOW"))
 
     def start_live_listening(self):
         def task():
             try:
-                self.status_label.configure(text="🎙️ Adjusting mic... speak clearly", text_color="#f1c40f")
+                self.status_bar.configure(text="🎙️ Adjusting mic... speak now", text_color="#f1c40f")
                 temp_audio = record_live_audio()
-                self.status_label.configure(text="🧠 AI Transcribing...", text_color="#3498db")
+                self.status_bar.configure(text="🧠 AI Transcribing...", text_color="#3498db")
                 output_txt = f"output/dictation_{os.path.basename(temp_audio)}.txt"
                 TranscribeConverter().convert(temp_audio, output_txt)
-                if os.path.exists(temp_audio):
-                    os.remove(temp_audio)
-                self.status_label.configure(text="✅ Transcription Complete", text_color="#2ecc71")
-                self.update_preview(output_txt)
-                messagebox.showinfo("Success", "Dictation saved to output folder.")
+                os.remove(temp_audio)
+                self.after(0, lambda: self.update_preview(output_txt))
+                self.after(0, lambda: messagebox.showinfo("Success", "Voice saved to output folder."))
+                self.after(0, lambda: self.status_bar.configure(text="✅ Transcription Complete", text_color="#2ecc71"))
             except Exception as e:
-                self.status_label.configure(text="❌ Mic Error", text_color="red")
-                messagebox.showerror("Error", str(e))
+                self.after(0, lambda: self.status_bar.configure(text="❌ Mic Error", text_color="red"))
+                self.after(0, lambda: messagebox.showerror("Error", str(e)))
 
         threading.Thread(target=task).start()
 
-    def start_conversion_thread(self):
-        target = self.ext_entry.get().strip().lower()
-        if not self.selected_path or not target:
-            messagebox.showwarning("Error", "Please select a file and specify a target format.")
-            return
-        
-        self.convert_btn.configure(state="disabled")
-        self.progress_bar.configure(mode="indeterminate")
-        self.progress_bar.start()
-        self.status_label.configure(text="⚙️ Processing conversion...", text_color="#f1c40f")
-        
-        threading.Thread(target=self.run_conversion, args=(target,)).start()
-
-    def run_conversion(self, target):
-        try:
-            self.app_logic.run(self.selected_path, target)
-            self.after(0, self.on_success)
-        except Exception as e:
-            self.after(0, lambda: self.on_error(str(e)))
-
-    def on_success(self):
-        self.progress_bar.stop()
-        self.progress_bar.configure(mode="determinate")
-        self.progress_bar.set(1)
-        self.convert_btn.configure(state="normal")
-        self.status_label.configure(text="✅ Conversion Successful", text_color="#2ecc71")
-        messagebox.showinfo("Success", "Conversion finished successfully!")
-
-    def on_error(self, err):
-        self.progress_bar.stop()
-        self.progress_bar.configure(mode="determinate")
-        self.progress_bar.set(0)
-        self.convert_btn.configure(state="normal")
-        self.status_label.configure(text="❌ Conversion Failed", text_color="red")
-        messagebox.showerror("Error", err)
-
 if __name__ == "__main__":
-    app = PolyConvertPro()
+    app = PolyConvertStudio()
     app.mainloop()
